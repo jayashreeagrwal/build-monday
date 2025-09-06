@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { RiAddCircleFill } from "react-icons/ri";
 import { cn } from "@/lib/utils";
 import { ProjectAvatar } from "./project/project-avatar";
+import { CreateProjectModal } from "./project/create-project-modal";
 
 interface Project {
   id: string;
@@ -15,29 +17,32 @@ interface ProjectsProps {
   workspaceId?: string;
   pathname?: string;
   projects?: Project[];
-  onCreateProject?: () => void;
 }
 
 export const Projects = ({
   workspaceId = "demo-workspace",
-  pathname = "/workspaces/demo-workspace",
+  pathname = "/",
   projects = [
     { id: "1", name: "Project Alpha", imageUrl: "" },
     { id: "2", name: "Project Beta", imageUrl: "" },
   ],
-  onCreateProject = () => console.log("Create project clicked"),
 }: ProjectsProps) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="flex flex-col gap-y-2">
+      {/* Header + Add button */}
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase text-neutral-500">Projects</p>
         <RiAddCircleFill
-          onClick={onCreateProject}
+          onClick={() => setOpen(true)}
           className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"
         />
       </div>
+
+      {/* Projects list */}
       {projects.map((project) => {
-        const href = `/workspaces/${workspaceId}/projects/${project.id}`;
+        const href = `/projects/${project.id}`;
         const isActive = pathname === href;
 
         return (
@@ -54,6 +59,9 @@ export const Projects = ({
           </Link>
         );
       })}
+
+      {/* Modal */}
+      <CreateProjectModal open={open} onOpenChange={setOpen} />
     </div>
   );
 };

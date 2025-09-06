@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
         description: body.description
     };
 
+    console.log(payload);
+
     const response = await fetch(
         "https://260tmgmw-8000.inc1.devtunnels.ms/api/v1/project/newProject",
       {

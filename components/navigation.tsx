@@ -13,27 +13,27 @@ import {
 const routes = [
   {
     label: "Home",
-    href: "",
+    href: "/dashboard",
     icon: GoHome,
     activeIcon: GoHomeFill,
   },
-  {
-    label: "My Tasks",
-    href: "/tasks",
-    icon: GoCheckCircle,
-    activeIcon: GoCheckCircleFill,
-  },
+  // {
+  //   label: "My Tasks",
+  //   href: "/tasks",
+  //   icon: GoCheckCircle,
+  //   activeIcon: GoCheckCircleFill,
+  // },
   {
     label: "Members",
     href: "/members",
     icon: UsersIcon,
     activeIcon: UsersIcon,
   },
-    {
+  {
     label: "Projects",
-    href: "/projects",
-    icon: UsersIcon,
-    activeIcon: UsersIcon,
+    href: "/project",
+    icon: SettingsIcon,
+    activeIcon: SettingsIcon,
   },
 ];
 
@@ -43,13 +43,16 @@ interface NavigationProps {
 }
 
 export const Navigation = ({
-  workspaceId = "demo-workspace",
-  pathname = "/workspaces/demo-workspace",
+  workspaceId,
+  pathname = "/",
 }: NavigationProps) => {
   return (
     <ul className="flex flex-col">
       {routes.map((item) => {
-        const fullHref = `/workspaces/${workspaceId}${item.href}`;
+        const fullHref = workspaceId
+          ? `/workspaces/${workspaceId}${item.href === "/" ? "" : item.href}`
+          : item.href;
+
         const isActive = pathname === fullHref;
         const Icon = isActive ? item.activeIcon : item.icon;
 

@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect, useState } from "react";
 
 interface Project {
   id: string;
@@ -7,38 +9,46 @@ interface Project {
 }
 
 function AllProjects() {
-  const projects: Project[] = [
-    {
-      id: '1',
-      name: 'Optimize Website Controllers',
-      description: 'Improving performance and user experience of web controllers'
-    },
-    {
-      id: '2',
-      name: 'Remove Sales App',
-      description: 'Deprecating legacy sales application and migrating data'
-    },
-    {
-      id: '3',
-      name: 'Stripe Integration',
-      description: 'Implementing secure payment processing with Stripe API'
-    },
-    {
-      id: '4',
-      name: 'Mobile App Redesign',
-      description: 'Complete visual overhaul of mobile application interface'
-    },
-    {
-      id: '5',
-      name: 'Database Migration',
-      description: 'Migrating from MySQL to PostgreSQL for better performance'
-    },
-    {
-      id: '6',
-      name: 'API Documentation',
-      description: 'Creating comprehensive API documentation for developers'
-    }
-  ];
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("/api/projects");
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to fetch projects");
+        }
+
+        setProjects(data.data || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">Loading projects...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-600">Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -52,12 +62,12 @@ function AllProjects() {
             <h3 className="text-lg font-semibold text-center group-hover:text-blue-600 transition-colors mb-3">
               {project.name}
             </h3>
-            
+
             {/* Project Description */}
             <p className="text-sm text-gray-600 text-center mb-4 px-2">
               {project.description}
             </p>
-            
+
             {/* Placeholder Image */}
             <div className="w-full h-24 bg-gray-200 rounded-lg flex items-center justify-center">
               <span className="text-gray-500 text-xs">Project Image</span>
