@@ -43,14 +43,15 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
   const onSubmit = async (values: z.infer<typeof createProjectSchema>) => {
     try {
       setLoading(true);
-
-      const response = await fetch("/api/create-projects", {
+      
+      const response = await fetch("/api/projects/create-project", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
 
       const data = await response.json();
+      alert("TFGYBHNJKM")
       if (!response.ok) {
         console.error("API Error:", data.error);
         return;
@@ -58,6 +59,7 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
 
       console.log("Created:", data);
     } catch (err) {
+      console.error(err)
       console.error("Error creating project:", err);
     } finally {
       setLoading(false);
@@ -132,7 +134,6 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
                 type="submit"
                 size="lg"
                 disabled={loading} onClick={form.handleSubmit(onSubmit)}
-               
               >
                 {loading ? "Creating..." : "Create Project"}
               </Button>

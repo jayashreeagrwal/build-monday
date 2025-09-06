@@ -16,7 +16,8 @@ function AllProjects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch("/api/projects");
+        const res = await fetch("/api/projects/view-all-project");
+        console.log(res)
         const data = await res.json();
 
         if (!res.ok) {

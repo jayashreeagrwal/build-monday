@@ -20,7 +20,6 @@ interface ProjectsProps {
 }
 
 export const Projects = ({
-  workspaceId = "demo-workspace",
   pathname = "/",
   projects = [
     { id: "1", name: "Project Alpha", imageUrl: "" },
