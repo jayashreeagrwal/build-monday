@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
 
           {/* CTA Buttons */}
           <div className="flex justify-center mb-20">
+            <Link href="/sign-up"></Link>
             <button className="bg-blue-600 text-white px-12 py-4 rounded-full text-lg font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg">
               Sign in to get started
             </button>
