@@ -1,0 +1,219 @@
+"use client";
+
+import { z } from "zod";
+import Image from "next/image";
+import { ArrowLeftIcon, ImageIcon } from "lucide-react";
+import { useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+const updateProjectSchema = z.object({
+  name: z.string().min(1, "Project name is required"),
+  image: z.any().optional(),
+});
+
+interface Project {
+  $id: string;
+  name: string;
+  imageUrl?: string;
+  workspaceId: string;
+}
+
+interface EditProjectFormProps {
+  onCancel?: () => void;
+  initialValues: Project;
+}
+
+export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const form = useForm<z.infer<typeof updateProjectSchema>>({
+    resolver: zodResolver(updateProjectSchema),
+    defaultValues: {
+      name: initialValues.name,
+      image: initialValues.imageUrl ?? "",
+    },
+  });
+
+  const handleDelete = () => {
+    console.log("Delete project clicked:", initialValues.$id);
+    onCancel?.();
+  };
+
+  const onSubmit = (values: z.infer<typeof updateProjectSchema>) => {
+    const finalValues = {
+      ...values,
+      image: values.image instanceof File ? values.image : values.image ?? "",
+    };
+    console.log("Saving project:", initialValues.$id, finalValues);
+    form.reset();
+    onCancel?.();
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("image", file);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-y-4">
+      {/* Edit Form */}
+      <Card className="w-full h-full border-none shadow-none">
+        <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
+          <Button size="sm" variant="secondary" onClick={onCancel}>
+            <ArrowLeftIcon className="size-4" />
+            Back
+          </Button>
+          <CardTitle className="text-xl font-bold">{initialValues.name}</CardTitle>
+        </CardHeader>
+
+        <div className="px-7">
+          <Separator />
+        </div>
+
+        <CardContent className="p-7">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-y-4">
+                {/* Project Name */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Project Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter project name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Project Image */}
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-y-2">
+                      <div className="flex items-center gap-x-5">
+                        {field.value ? (
+                          <div className="w-18 h-18 relative rounded-md overflow-hidden">
+                            <Image
+                              src={field.value instanceof File ? URL.createObjectURL(field.value) : field.value}
+                              alt="Project Icon"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <Avatar className="w-18 h-18">
+                            <AvatarFallback>
+                              <ImageIcon className="w-9 h-9 text-neutral-400" />
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
+                        <div className="flex flex-col">
+                          <p className="text-sm">Project Icon</p>
+                          <p className="text-sm text-muted-foreground">
+                            JPG, PNG, SVG or JPEG, max 1MB
+                          </p>
+                          <input
+                            className="hidden"
+                            accept=".jpg,.png,.jpeg,.svg"
+                            type="file"
+                            ref={inputRef}
+                            onChange={handleImageChange}
+                          />
+                          {field.value ? (
+                            <Button
+                              variant="destructive"
+                              type="button"
+                              size="xs"
+                              className="w-fit mt-2"
+                              onClick={() => {
+                                field.onChange(null);
+                                if (inputRef.current) inputRef.current.value = "";
+                              }}
+                            >
+                              Remove Image
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="teritary"
+                              type="button"
+                              size="xs"
+                              className="w-fit mt-2"
+                              onClick={() => inputRef.current?.click()}
+                            >
+                              Upload Image
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                />
+              </div>
+
+              <Separator className="py-7" />
+
+              <div className="flex items-center justify-between">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="secondary"
+                  onClick={onCancel}
+                  className={cn(!onCancel && "invisible")}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" size="lg">
+                  Save Changes
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full h-full border-none shadow-none">
+        <CardContent className="p-7">
+          <div className="flex flex-col">
+            <h3 className="font-bold">Danger Zone</h3>
+            <p className="text-sm text-muted-foreground">
+              Deleting a project is irreversible and will remove all associated data.
+            </p>
+            <Separator className="py-7" />
+            <Button
+              className="mt-6 w-fit ml-auto"
+              size="sm"
+              variant="destructive"
+              type="button"
+              onClick={handleDelete}
+            >
+              Delete Project
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
