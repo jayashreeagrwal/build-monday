@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     };
 
     const response = await fetch(
-        "https://img-169528297296.us-central1.run.app/api/v1/task/createTask",
+        "https://260tmgmw-8000.inc1.devtunnels.ms/api/v1/task/createTask",
       {
         method: "POST",
         headers: {
