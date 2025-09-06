@@ -5,16 +5,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     
     const payload = {
-      username: body.email,          
-      password: body.password,
+        title: body.title,
+        description: body.description
     };
 
     const response = await fetch(
-        "https://img-169528297296.us-central1.run.app/api/v1/auth/login",
+        "https://img-169528297296.us-central1.run.app/api/v1/project/newProject",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer {"id": 1, "userName": "svd "}`
         },
         body: JSON.stringify(payload),
       }
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
     const data = await response.json();
 
     if (!response.ok) {
-      return NextResponse.json({ error: data.message || "Signup failed" }, { status: response.status });
+      return NextResponse.json({ error: data.message || "Project Creation Failed" }, { status: response.status });
     }
 
     return NextResponse.json({ success: true, data });
