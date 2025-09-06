@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
+    const body = await req.json();
 
     const response = await fetch(
-        "https://img-169528297296.us-central1.run.app/api/v1/project/allProject",
+      `https://img-169528297296.us-central1.run.app/api/v1/task/getTasks/${body.projectId}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer {"id": 1, "userName": "svd "}`
+          "Authorization": `Bearer {"id": 1, "userName": "svd"}`
         },
       }
     );

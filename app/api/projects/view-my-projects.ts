@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const body = await req.json();
 
     const response = await fetch(
         "https://img-169528297296.us-central1.run.app/api/v1/project/myProjects",
